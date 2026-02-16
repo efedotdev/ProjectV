@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +10,12 @@ namespace Core.DependencyResolvers
 {
     public class CoreModule
     {
-        public CoreModule(IServiceProvider)
+        public void Load(IServiceCollection serviceCollection)
         {
-            
+            // _memorycache için
+            //serviceCollection.AddMemoryCache();
+            //serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();
         }
     }
 }

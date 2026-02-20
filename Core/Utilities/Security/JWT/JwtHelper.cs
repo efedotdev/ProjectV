@@ -1,5 +1,5 @@
 ﻿using Core.Entities.Concrete;
-using Core.Utilities.Extenstions;
+using Core.Extenstions;
 using Core.Utilities.Security.Encryption;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

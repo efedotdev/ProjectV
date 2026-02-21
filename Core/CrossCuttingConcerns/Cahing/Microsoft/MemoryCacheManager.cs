@@ -1,4 +1,5 @@
-﻿using Core.Utilities.IoC;
+﻿using Core.CrossCuttingConcerns.Cahing;
+using Core.Utilities.IoC;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -42,13 +43,13 @@ namespace Core.CrossCuttingConcerns.Cahing.Microsoft
             _memoryCache.Remove(key);
         }
 
-        public void RemoveByPattern(string pattern)
+        public void RemoveByPattern(string pattern) //
         {
             var cacheEntriesCollectionDefinition = typeof(MemoryCache).GetProperty("EntriesCollection", 
                   System.Reflection.BindingFlags.NonPublic
                 | System.Reflection.BindingFlags.Instance);
             var cacheEntriesCollection = cacheEntriesCollectionDefinition.GetValue(_memoryCache) as dynamic;
-            List<ICacheEntry> cacheCollectionValues = new List<ICacheEntry>();
+            List<ICacheEntry> cacheCollectionValues = new List<ICacheEntry>(); 
 
             foreach (var cacheItem in cacheEntriesCollection)
             {

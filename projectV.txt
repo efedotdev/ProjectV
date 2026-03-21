@@ -1,0 +1,46 @@
+Projede daha iyi anlamam gereken kısımlar;
+
+* Dependency Resolverslar ve IoC hakkında biraz daha 
+kaynak taramam lazım.
+* şu yapıya bak;
+public void RemoveByPattern(string pattern)  //
+{
+    var cacheEntriesCollectionDefinition = typeof(MemoryCache).GetProperty("EntriesCollection", 
+          System.Reflection.BindingFlags.NonPublic
+        | System.Reflection.BindingFlags.Instance);
+    var cacheEntriesCollection = cacheEntriesCollectionDefinition.GetValue(_memoryCache) as dynamic;
+    List<ICacheEntry> cacheCollectionValues = new List<ICacheEntry>();
+
+    foreach (var cacheItem in cacheEntriesCollection)
+    {
+        ICacheEntry cacheItemValue = cacheItem.GetType().GetProperty("Value").GetValue(cacheItem, null);
+        cacheCollectionValues.Add(cacheItemValue);
+    }
+
+    var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    var keysToRemove = cacheCollectionValues.Where(d => regex.IsMatch(d.Key.ToString())).Select(d => d.Key).ToList();
+
+    foreach (var key in keysToRemove)
+    {
+        _memoryCache.Remove(key);
+    }
+}
+
+* şu yapıya bi bak ;
+Core.DataAccess.EntityFramework.Concrete=>
+
+ public TEntity Get(Expression<Func<TEntity, bool>> filter = null)
+{
+    using (TContext context = new TContext())
+    {
+        return context.Set<TEntity>().SingleOrDefault(filter);
+    }
+}
+
+* Extenstions ların mantığına bir daha bi bak
+* Security de son bi kaç bakış at
+* aspectleri bir tek tek araştırıp ekstra neler var bak 
+*reflection ; run timde koda etki etmek
+**polimorfis<m
+yarın bunları bi araştır en sonda da biraz araştırarak bir loger yaz pazar günü içinde artık bir frontend kursu yada eğtimi bak belki engin hocadan devam edebilirsin ama ordan 
+devam et.

@@ -49,7 +49,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("delete")]
-
         public IActionResult Delete(Product product)
         {
             var result = _productService.Delete(product);
@@ -61,11 +60,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update")]
-
-        public IActionResult Update(Product product)
+        public IActionResult Update([FromBody] Product entity)
         {
-
-            var result = _productService.Update(product);
+            var result = _productService.Update(entity);
             if (result.Success)
             {
                 return Ok(result);

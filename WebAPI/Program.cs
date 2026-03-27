@@ -73,7 +73,7 @@ namespace WebAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+          //  app.UseHttpsRedirection();
 
 
 

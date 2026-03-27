@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace WebAPI.Controllers
 {
@@ -48,8 +49,9 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        // WebAPI/Controllers/ProductsController.cs
         [HttpDelete("delete")]
-        public IActionResult Delete(Product product)
+        public IActionResult Delete([FromBody] Product product) // [FromBody] eklendi
         {
             var result = _productService.Delete(product);
             if (result.Success)
@@ -60,9 +62,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromBody] Product entity)
+        public IActionResult Update([FromBody] Product product)
         {
-            var result = _productService.Update(entity);
+            var result = _productService.Update(product);
             if (result.Success)
             {
                 return Ok(result);

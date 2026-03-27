@@ -6,10 +6,10 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthControler : Controller
+    public class AuthController : Controller
     {
         private IAuthService _authService;
-        public AuthControler(IAuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }

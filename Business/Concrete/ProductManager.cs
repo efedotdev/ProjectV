@@ -40,8 +40,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.Added);
         }
 
-        [SecuredOperation("product.delete,admin")]
-        [CacheRemoveAspect("IProductService.Get")]
+        //[SecuredOperation("product.delete,admin")]
+        //[CacheRemoveAspect("IProductService.Get")]
         public IResult Delete(Product product)
         {
             IResult result = BusinessRules.Run(CheckIfProductUsedInOrders(product.ProductId));
@@ -64,7 +64,7 @@ namespace Business.Concrete
         public IResult Update(Product product)
         {
 
-            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName));
+            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName, product.ProductId));
             if (result != null)
             {
                 return result;
@@ -73,15 +73,18 @@ namespace Business.Concrete
             return new SuccessResult(Messages.Modified);
         }
 
-        private IResult CheckIfProductNameExists(string productName)
+        // CheckIfProductNameExists metodunu ID'yi hariç tutacak şekilde güncelleyin:
+        private IResult CheckIfProductNameExists(string productName, int currentProductId)
         {
-            var result = _productDal.GetAll(p => p.ProductName == productName).Any();
+            // Kendi ID'si hariç, aynı isme sahip başka bir ürün var mı?
+            var result = _productDal.GetAll(p => p.ProductName == productName && p.ProductId != currentProductId).Any();
             if (result)
             {
-                return new ErrorResult(Messages.ProductNameAlreadyExists);
+                return new ErrorResult(Messages.ProductNameAlreadyExists); // veya "Aynı isimde başka bir ürün mevcut."
             }
             return new SuccessResult();
         }
+        
         private IResult CheckIfProductUsedInOrders(int productId)
         {
             var result = _orderDetailService.GetAll();

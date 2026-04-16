@@ -19,41 +19,43 @@ namespace Business.Concrete
         {
             _categoryDal = CategoryDal;
         }
-        public IResult Add(Category Category)
+        public async Task<IResult> AddAsync(Category Category)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _categoryDal.Add(Category);
+            await _categoryDal.AddAsync(Category);
             return new SuccessResult(Messages.Added);
         }
 
-        public IResult Delete(Category Category)
+        public async Task<IResult> Delete(Category Category)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _categoryDal.Delete(Category);
+            await _categoryDal.Delete(Category);
             return new SuccessResult(Messages.Deleted);
         }
 
-        public IDataResult<List<Category>> GetAll()
+        public async Task<IDataResult<List<Category>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<Category>>(_categoryDal.GetAll(), Messages.Get);
+            var data = await _categoryDal.GetAllAsync();
+            return new SuccessDataResult<List<Category>>(data,Messages.Get);
+            
         }
 
-        public IResult Update(Category Category)
+        public async Task<IResult> Update(Category Category)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _categoryDal.Update(Category);
+            await _categoryDal.Update(Category);
             return new SuccessResult(Messages.Modified);
         }
     }

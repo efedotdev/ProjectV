@@ -14,8 +14,8 @@ namespace Business.Abstract
         //IDataResult <List<OperationClaim>> GetClaims(User user);
         //IResult Add(User user);
         //IDataResult<User> GetByMail(string email);
-        List<OperationClaim> GetClaims(User user);
-        void Add(User user);
-        User GetByMail(string email);
+        Task<List<OperationClaim>> GetClaimsAsync(User user);
+        Task AddAsync(User user);
+        Task<User> GetByMailAsync(string email);
     }
 }

@@ -34,19 +34,19 @@ namespace Business.Concrete
         //    return new SuccessDataResult <List<OperationClaim>> (_userDal.GetClaims(user));           
         //}
         // ????????????????????????????????????? neden RESULT KULLANAMIYOR PASSWORD HASH GELMEDİ AUTHMANAGERDA
-        public List<OperationClaim> GetClaims(User user)
+        public async Task<List<OperationClaim>> GetClaimsAsync(User user)
         {
-            return _userDal.GetClaims(user);
+            return await _userDal.GetClaimsAsync(user);
         }
 
-        public void Add(User user)
+        public async Task AddAsync(User user)
         {
-            _userDal.Add(user);
+            await _userDal.AddAsync(user);
         }
 
-        public User GetByMail(string email)
+        public async  Task<User> GetByMailAsync(string email)
         {
-            return _userDal.Get(u => u.Email == email);
+            return await _userDal.GetAsync(u => u.Email == email);
         }
 
     }

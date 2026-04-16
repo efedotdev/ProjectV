@@ -29,70 +29,71 @@ namespace Business.Concrete
             _orderDetailService = orderDetailService;
 
         }
-        public IResult Add(Product product)
+        public async Task<IResult> AddAsync(Product product)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _productDal.Add(product);
+            await _productDal.AddAsync(product);
             return new SuccessResult(Messages.Added);
         }
 
         //[SecuredOperation("product.delete,admin")]
         //[CacheRemoveAspect("IProductService.Get")]
-        public IResult Delete(Product product)
+        public async Task<IResult> Delete(Product product)
         {
-            IResult result = BusinessRules.Run(CheckIfProductUsedInOrders(product.ProductId));
-            if (result != null)
-            {
-                return result;
-            }
-            _productDal.Delete(product);
+            //IResult result = BusinessRules.Run(CheckIfProductUsedInOrders(product.ProductId));
+            //if (result != null)
+            //{
+            //    return result;
+            //}
+            await _productDal.Delete(product);
             return new SuccessResult(Messages.Deleted);
         }
 
-        public IDataResult<List<Product>> GetAll()
+        public async Task<IDataResult<List<Product>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<Product>>(_productDal.GetAll(), Messages.Get);
+            var data = await _productDal.GetAllAsync();
+            return new SuccessDataResult<List<Product>>(data, Messages.Get);
         }
 
         //[SecuredOperation("product.update,admin")]
         //[ValidationAspect(typeof(ProductValidator))]
         //[CacheRemoveAspect("IProductService.Get")]
-        public IResult Update(Product product)
+        public async Task<IResult> Update(Product product)
         {
 
-            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName, product.ProductId));
+            IResult result = BusinessRules.Run(await CheckIfProductNameExists(product.ProductName, product.ProductId));
             if (result != null)
             {
                 return result;
             }
-            _productDal.Update(product);
+            await _productDal.Update(product);
             return new SuccessResult(Messages.Modified);
         }
 
         // CheckIfProductNameExists metodunu ID'yi hariç tutacak şekilde güncelleyin:
-        private IResult CheckIfProductNameExists(string productName, int currentProductId)
+        private async Task<IResult> CheckIfProductNameExists(string productName, int currentProductId)
         {
             // Kendi ID'si hariç, aynı isme sahip başka bir ürün var mı?
-            var result = _productDal.GetAll(p => p.ProductName == productName && p.ProductId != currentProductId).Any();
-            if (result)
+            var result = await _productDal.GetAllAsync(p => p.ProductName == productName && p.ProductId != currentProductId);
+            if (result.Any())
             {
                 return new ErrorResult(Messages.ProductNameAlreadyExists); // veya "Aynı isimde başka bir ürün mevcut."
             }
             return new SuccessResult();
         }
-        
-        private IResult CheckIfProductUsedInOrders(int productId)
-        {
-            var result = _orderDetailService.GetAll();
-            if (result.Data.Any(p => p.ProductId == productId))
-            {
-                return new ErrorResult(Messages.PreviouslyUsedProduct);
-            }
-            return new SuccessResult();
-        }
+
+        //    private IResult CheckIfProductUsedInOrders(int productId)
+        //    {
+        //        var result = _orderDetailService.GetAll();
+        //        if (result.Data.Any(p => p.ProductId == productId))
+        //        {
+        //            return new ErrorResult(Messages.PreviouslyUsedProduct);
+        //        }
+        //        return new SuccessResult();
+        //    }
     }
 }

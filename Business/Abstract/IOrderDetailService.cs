@@ -10,9 +10,9 @@ namespace Business.Abstract
 {
     public interface IOrderDetailService
     {
-        IDataResult<List<OrderDetail>> GetAll();
-        IResult Add(OrderDetail orderDetail);
-        IResult Delete(OrderDetail orderDetail);
-        IResult Update(OrderDetail orderDetail);
+        Task<IDataResult<List<OrderDetail>>> GetAllAsync();
+        Task<IResult> AddAsync(OrderDetail orderDetail);
+        Task<IResult> Delete(OrderDetail orderDetail);
+        Task<IResult> Update(OrderDetail orderDetail);
     }
 }

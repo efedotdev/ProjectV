@@ -15,9 +15,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(UserOperationClaim userOperationClaim)
+        public async Task<IActionResult> Add(UserOperationClaim userOperationClaim)
         {
-            var result = _userOperationClaimService.Add(userOperationClaim);
+            var result = await _userOperationClaimService.AddAsync(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);

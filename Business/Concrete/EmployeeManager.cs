@@ -19,41 +19,42 @@ namespace Business.Concrete
         {
             _employeeDal = employeeDal;
         }
-        public IResult Add(Employee employee)
+        public async Task<IResult> AddAsync(Employee employee)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _employeeDal.Add(employee);
+            await _employeeDal.AddAsync(employee);
             return new SuccessResult(Messages.Added);
         }
 
-        public IResult Delete(Employee employee)
+        public async Task<IResult> Delete(Employee employee)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _employeeDal.Delete(employee);
+            await _employeeDal.Delete(employee);
             return new SuccessResult(Messages.Deleted);
         }
 
-        public IDataResult<List<Employee>> GetAll()
+        public async Task<IDataResult<List<Employee>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<Employee>>(_employeeDal.GetAll(), Messages.Get);
+            var data = await _employeeDal.GetAllAsync();
+            return new SuccessDataResult<List<Employee>>(data,Messages.Get);
         }
 
-        public IResult Update(Employee employee)
+        public async Task<IResult> Update(Employee employee)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _employeeDal.Update(employee);
+            await _employeeDal.Update(employee);
             return new SuccessResult(Messages.Modified);
         }
     }

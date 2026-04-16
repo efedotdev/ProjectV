@@ -19,9 +19,9 @@ namespace Business.Concrete
             _userOperationClaimDal = userOperationClaimDal;
         }
 
-        public IResult Add(UserOperationClaim userOperationClaim)
+        public async Task<IResult> AddAsync(UserOperationClaim userOperationClaim)
         {
-            _userOperationClaimDal.Add(userOperationClaim);
+            await _userOperationClaimDal.AddAsync(userOperationClaim);
             return new SuccessResult("Kullanıcıya yetki başarıyla atandı.");
         }
     }

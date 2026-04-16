@@ -10,9 +10,9 @@ namespace Business.Abstract
 {
     public interface IDepartmentService
     {
-        IDataResult<List<Department>> GetAll();
-        IResult Add(Department department);
-        IResult Delete(Department department);
-        IResult Update(Department department);
+        Task<IDataResult<List<Department>>> GetAllAsync();
+        Task<IResult> AddAsync(Department department);
+        Task<IResult> Delete(Department department);
+        Task<IResult> Update(Department department);
     }
 }

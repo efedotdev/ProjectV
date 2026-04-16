@@ -12,48 +12,49 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class CustomerManager:ICustomerService
+    public class CustomerManager : ICustomerService
     {
         ICustomerDal _customerDal;
         public CustomerManager(ICustomerDal customerDal)
         {
             _customerDal = customerDal;
         }
-        public IResult Add(Customer customer)
+        public async Task<IResult> AddAsync(Customer customer)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _customerDal.Add(customer);
+            await _customerDal.AddAsync(customer);
             return new SuccessResult(Messages.Added);
         }
 
-        public IResult Delete(Customer customer)
+        public async Task<IResult> Delete(Customer customer)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _customerDal.Delete(customer);
+            await _customerDal.Delete(customer);
             return new SuccessResult(Messages.Deleted);
         }
 
-        public IDataResult<List<Customer>> GetAll()
+        public async Task<IDataResult<List<Customer>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<Customer>>(_customerDal.GetAll(), Messages.Get);
+            var data = await _customerDal.GetAllAsync();
+            return new SuccessDataResult<List<Customer>>(data, Messages.Get);
         }
 
-        public IResult Update(Customer customer)
+        public async Task<IResult> Update(Customer customer)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _customerDal.Update(customer);
+            await _customerDal.Update(customer);
             return new SuccessResult(Messages.Modified);
         }
     }

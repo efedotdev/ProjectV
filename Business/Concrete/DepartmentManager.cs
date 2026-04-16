@@ -19,41 +19,42 @@ namespace Business.Concrete
         {
             _departmentDal = departmentDal;
         }
-        public IResult Add(Department department)
+        public async Task<IResult> AddAsync(Department department)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _departmentDal.Add(department);
+            await _departmentDal.AddAsync(department);
             return new SuccessResult(Messages.Added);
         }
 
-        public IResult Delete(Department department)
+        public async Task<IResult> Delete(Department department)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _departmentDal.Delete(department);
+            await _departmentDal.Delete(department);
             return new SuccessResult(Messages.Deleted);
         }
 
-        public IDataResult<List<Department>> GetAll()
+        public async Task<IDataResult<List<Department>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<Department>>(_departmentDal.GetAll(), Messages.Get);
+            var data = await _departmentDal.GetAllAsync();
+            return new SuccessDataResult<List<Department>>(data, Messages.Get);
         }
 
-        public IResult Update(Department department)
+        public async Task<IResult> Update(Department department)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _departmentDal.Update(department);
+            await _departmentDal.Update(department);
             return new SuccessResult(Messages.Modified);
         }
     }

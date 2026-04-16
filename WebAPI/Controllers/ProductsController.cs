@@ -27,9 +27,9 @@ namespace WebAPI.Controllers
         //routing
         [HttpGet("getall")]
         //swagger -- apinin dökümantasyonu
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var result = _productService.GetAll();
+            var result = await _productService.GetAllAsync();
             if (result.Success)
             {
                 return Ok(result);
@@ -39,9 +39,9 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("add")]
-        public IActionResult Add(Product product)
+        public async Task<IActionResult> Add(Product product)
         {
-            var result = _productService.Add(product);
+            var result = await _productService.AddAsync(product);
             if (result.Success)
             {
                 return Ok(result);
@@ -51,9 +51,9 @@ namespace WebAPI.Controllers
 
         // WebAPI/Controllers/ProductsController.cs
         [HttpDelete("delete")]
-        public IActionResult Delete([FromBody] Product product) // [FromBody] eklendi
+        public async Task<IActionResult> Delete([FromBody] Product product) // [FromBody] eklendi
         {
-            var result = _productService.Delete(product);
+            var result = await _productService.Delete(product);
             if (result.Success)
             {
                 return Ok(result);
@@ -62,9 +62,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromBody] Product product)
+        public async Task<IActionResult> Update([FromBody] Product product)
         {
-            var result = _productService.Update(product);
+            var result = await _productService.Update(product);
             if (result.Success)
             {
                 return Ok(result);

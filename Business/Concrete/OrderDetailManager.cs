@@ -19,41 +19,42 @@ namespace Business.Concrete
         {
             _orderDetailDal = orderDetailDal;
         }
-        public IResult Add(OrderDetail orderDetail)
+        public async Task<IResult> AddAsync(OrderDetail orderDetail)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _orderDetailDal.Add(orderDetail);
+            await _orderDetailDal.AddAsync(orderDetail);
             return new SuccessResult(Messages.Added);
         }
 
-        public IResult Delete(OrderDetail orderDetail)
+        public async Task<IResult> Delete(OrderDetail orderDetail)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _orderDetailDal.Delete(orderDetail);
+            await _orderDetailDal.Delete(orderDetail);
             return new SuccessResult(Messages.Deleted);
         }
 
-        public IDataResult<List<OrderDetail>> GetAll()
+        public async Task<IDataResult<List<OrderDetail>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<OrderDetail>>(_orderDetailDal.GetAll(), Messages.Get);
+            var data = await _orderDetailDal.GetAllAsync();
+            return new SuccessDataResult<List<OrderDetail>>(data,Messages.Get);
         }
 
-        public IResult Update(OrderDetail orderDetail)
+        public async Task<IResult> Update(OrderDetail orderDetail)
         {
             IResult result = BusinessRules.Run();
             if (result != null)
             {
                 return result;
             }
-            _orderDetailDal.Update(orderDetail);
+            await _orderDetailDal.Update(orderDetail);
             return new SuccessResult(Messages.Modified);
         }
     }

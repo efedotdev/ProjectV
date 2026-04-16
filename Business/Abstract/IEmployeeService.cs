@@ -10,9 +10,9 @@ namespace Business.Abstract
 {
     public interface IEmployeeService
     {
-        IDataResult<List<Employee>> GetAll();
-        IResult Add(Employee employee);
-        IResult Delete(Employee employee);
-        IResult Update(Employee employee);
+        Task<IDataResult<List<Employee>>> GetAllAsync();
+        Task<IResult> AddAsync(Employee employee);
+        Task<IResult> Delete(Employee employee);
+        Task<IResult> Update(Employee employee);
     }
 }

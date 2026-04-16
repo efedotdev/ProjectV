@@ -10,9 +10,9 @@ namespace Business.Abstract
 {
     public interface IProductService
     {
-        IDataResult <List<Product>> GetAll();
-        IResult Add(Product product);
-        IResult Delete(Product product);
-        IResult Update(Product product);
+        Task<IDataResult <List<Product>>> GetAllAsync();
+        Task<IResult> AddAsync(Product product);
+        Task<IResult> Delete(Product product);
+        Task<IResult> Update(Product product);
     }
 }

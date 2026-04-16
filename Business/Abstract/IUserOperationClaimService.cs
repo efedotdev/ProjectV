@@ -10,6 +10,6 @@ namespace Business.Abstract
 {
     public interface IUserOperationClaimService
     {
-        IResult Add(UserOperationClaim userOperationClaim);
+        Task<IResult> AddAsync(UserOperationClaim userOperationClaim);
     }
 }

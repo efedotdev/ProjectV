@@ -75,14 +75,14 @@ namespace Core.Utilities.Interceptors
         }
         private async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
         {
+            TResult result = default;
             var isSuccess = true;
             await OnBeforeAsync(invocation);
             try
             {
                 invocation.Proceed();
                 var task = (Task<TResult>)invocation.ReturnValue;
-                TResult result = await task;
-                return result;
+                result = await task; // Veriyi aldık ama hemen return ETMİYORUZ.
             }
             catch (Exception e)
             {
@@ -90,7 +90,18 @@ namespace Core.Utilities.Interceptors
                 await OnExeptionAsync(invocation, e);
                 throw;
             }
-            await OnAfterAsync(invocation);
+            finally
+            {
+                // İşlem başarılıysa, cache'i silmesi için kuryeye (CacheRemoveAspect) haber ver!
+                if (isSuccess)
+                {
+                    await OnSuccessAsync(invocation);
+                }
+                await OnAfterAsync(invocation);
+            }
+
+            // Tüm yan işlemler bittikten sonra veriyi API'ye güvenle dönüyoruz.
+            return result;
         }
     }
 }

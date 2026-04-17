@@ -65,7 +65,7 @@ namespace Business.Concrete
 
         //[SecuredOperation("product.update,admin")]
         //[ValidationAspect(typeof(ProductValidator))]
-        [CacheRemoveAspect("Get")]
+        [CacheRemoveAspect("IProductService.Get")]
         public async Task<IResult> Update(Product product)
         {
 

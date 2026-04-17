@@ -12,7 +12,7 @@ namespace Core.Aspects.Autofac.Logging
 {
     public class LoggingAspect : MethodInterception
     {
-        protected override void OnBefore(IInvocation invocation)
+        protected override async Task OnBeforeAsync(IInvocation invocation)
         {
             var logParameters = new List<LogParameter>();
 
@@ -33,6 +33,7 @@ namespace Core.Aspects.Autofac.Logging
             };
 
             Log.Information("Method Execution: {@LogDetail}", logDetail);
+            await Task.CompletedTask;
         }
 
     }

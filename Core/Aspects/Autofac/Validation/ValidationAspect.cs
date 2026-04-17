@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Interceptors;
 using FluentValidation;
 using System;
@@ -21,15 +22,16 @@ namespace Core.Aspects.Autofac.Validation
             _validatiorType = validatorType;
         }
 
-        protected override void OnBefore(IInvocation invocation)
+        protected override async Task OnBeforeAsync(IInvocation invocation)
         {
             var validator = (IValidator)Activator.CreateInstance(_validatiorType);
             var entityType = _validatiorType.BaseType.GetGenericArguments()[0];
             var entities = invocation.Arguments.Where(t=> t.GetType() == entityType);
             foreach (var entity in entities)
             {
-                
+                ValidationTool.Validate(validator, entity);
             }
+            await Task.CompletedTask;
         }
     }
 }

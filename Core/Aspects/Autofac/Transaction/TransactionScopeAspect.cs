@@ -11,20 +11,48 @@ namespace Core.Aspects.Autofac.Transaction
 {
     public class TransactionScopeAspect : MethodInterception
     {
-        public override void Intercept(IInvocation invocation)
+        private TransactionScope CreateScope()
         {
-            using (TransactionScope transactionScope = new TransactionScope())
+            return new TransactionScope(
+                TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                TransactionScopeAsyncFlowOption.Enabled);
+        }
+        public override void InterceptSynchronous(IInvocation invocation)
+        {
+            using (var tx = CreateScope())
             {
-                try
-                {
-                    invocation.Proceed();
-                    transactionScope.Complete();
-                }
-                catch (System.Exception e)
-                {
-                    transactionScope.Dispose();
-                    throw;
-                }
+                invocation.Proceed();
+                tx.Complete();
+            }
+        }
+        public override void InterceptAsynchronous(IInvocation invocation)
+        {
+            invocation.ReturnValue = InternalAsync(invocation);
+        }
+        private async Task InternalAsync(IInvocation invocation)
+        {
+            using (var tx = CreateScope())
+            {
+                var task = (Task)invocation.ReturnValue;
+                await task;
+                tx.Complete();
+            }
+        }
+        public override void InterceptAsynchronous<TResult>(IInvocation invocation)
+        {
+            invocation.ReturnValue = InternalAsync<TResult>(invocation);
+        }
+
+        private async Task<TResult> InternalAsync<TResult>(IInvocation invocation)
+        {
+            using (var tx = CreateScope())
+            {
+                invocation.Proceed();
+                var task = (Task<TResult>)invocation.ReturnValue;
+                TResult result = await task;
+                tx.Complete();
+                return result;
             }
         }
     }

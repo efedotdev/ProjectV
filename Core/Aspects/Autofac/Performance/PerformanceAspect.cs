@@ -14,27 +14,60 @@ namespace Core.Aspects.Autofac.Performance
     public class PerformanceAspect : MethodInterception
     {
         private int _interval;
-        private Stopwatch _stopwatch;
 
         public PerformanceAspect(int interval)
         {
             _interval = interval;
-            _stopwatch = ServiceTool.ServiceProvider.GetService<Stopwatch>();
         }
 
-
-        protected override void OnBefore(IInvocation invocation)
+        // Senkron ve Asenkron metodların her birini baştan sona sarmalıyoruz
+        public override void InterceptSynchronous(IInvocation invocation)
         {
-            _stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew(); // Sadece bu isteğe özel
+            try { invocation.Proceed(); }
+            finally { LogPerformance(invocation, stopwatch); }
         }
 
-        protected override void OnAfter(IInvocation invocation)
+        public override void InterceptAsynchronous(IInvocation invocation)
         {
-            if (_stopwatch.Elapsed.TotalSeconds > _interval)
+            invocation.ReturnValue = InternalAsync(invocation);
+        }
+
+        private async Task InternalAsync(IInvocation invocation)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            try
             {
-                Debug.WriteLine($"Performance : {invocation.Method.DeclaringType.FullName}.{invocation.Method.Name}-->{_stopwatch.Elapsed.TotalSeconds}");
+                invocation.Proceed();
+                await (Task)invocation.ReturnValue;
             }
-            _stopwatch.Reset();
+            finally { LogPerformance(invocation, stopwatch); }
+        }
+
+        public override void InterceptAsynchronous<TResult>(IInvocation invocation)
+        {
+            invocation.ReturnValue = InternalAsync<TResult>(invocation);
+        }
+
+        private async Task<TResult> InternalAsync<TResult>(IInvocation invocation)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            try
+            {
+                invocation.Proceed();
+                TResult result = await (Task<TResult>)invocation.ReturnValue;
+                return result;
+            }
+            finally { LogPerformance(invocation, stopwatch); }
+        }
+
+        private void LogPerformance(IInvocation invocation, Stopwatch stopwatch)
+        {
+            stopwatch.Stop();
+            if (stopwatch.Elapsed.TotalSeconds > _interval)
+            {
+                Debug.WriteLine($"Performance : {invocation.Method.DeclaringType.FullName}.{invocation.Method.Name}-->{stopwatch.Elapsed.TotalSeconds}");
+            }
         }
     }
 }

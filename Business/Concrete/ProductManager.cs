@@ -31,6 +31,7 @@ namespace Business.Concrete
 
         }
         [LoggingAspect]
+        [CacheRemoveAspect("IProductService.Get")]
         public async Task<IResult> AddAsync(Product product)
         {
             IResult result = BusinessRules.Run();
@@ -43,7 +44,7 @@ namespace Business.Concrete
         }
 
         //[SecuredOperation("product.delete,admin")]
-        //[CacheRemoveAspect("IProductService.Get")]
+        [CacheRemoveAspect("IProductService.Get")]
         public async Task<IResult> Delete(Product product)
         {
             //IResult result = BusinessRules.Run(CheckIfProductUsedInOrders(product.ProductId));
@@ -64,7 +65,7 @@ namespace Business.Concrete
 
         //[SecuredOperation("product.update,admin")]
         //[ValidationAspect(typeof(ProductValidator))]
-        //[CacheRemoveAspect("IProductService.Get")]
+        [CacheRemoveAspect("Get")]
         public async Task<IResult> Update(Product product)
         {
 

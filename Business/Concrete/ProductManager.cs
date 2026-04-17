@@ -3,6 +3,7 @@ using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Cahing;
+using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -29,6 +30,7 @@ namespace Business.Concrete
             _orderDetailService = orderDetailService;
 
         }
+        [LoggingAspect]
         public async Task<IResult> AddAsync(Product product)
         {
             IResult result = BusinessRules.Run();
@@ -53,6 +55,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.Deleted);
         }
 
+        [CacheAspect(duration:10)]
         public async Task<IDataResult<List<Product>>> GetAllAsync()
         {
             var data = await _productDal.GetAllAsync();

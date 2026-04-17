@@ -1,0 +1,39 @@
+﻿using Castle.DynamicProxy;
+using Core.Utilities.Interceptors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Serilog;
+using Core.CrossCuttingConcerns.Logging.Serilog;
+
+namespace Core.Aspects.Autofac.Logging
+{
+    public class LoggingAspect : MethodInterception
+    {
+        protected override void OnBefore(IInvocation invocation)
+        {
+            var logParameters = new List<LogParameter>();
+
+            for (int i = 0; i < invocation.Arguments.Length; i++)
+            {
+                logParameters.Add(new LogParameter
+                {
+                    Name = invocation.GetConcreteMethod().GetParameters()[i].Name,
+                    Value = invocation.Arguments[i],
+                    Type = invocation.Arguments[i].GetType().Name
+                });
+            }
+
+            var logDetail = new LogDetail
+            {
+                MethodName = invocation.Method.Name,
+                LogParameters = logParameters
+            };
+
+            Log.Information("Method Execution: {@LogDetail}", logDetail);
+        }
+
+    }
+}

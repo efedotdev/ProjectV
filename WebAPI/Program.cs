@@ -9,6 +9,7 @@ using Core.Utilities.Security.Encryption;
 using Core.Utilities.Security.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using WebAPI.Extensions;
 
 namespace WebAPI
 {
@@ -17,6 +18,8 @@ namespace WebAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.AddSerilogConfiguration();
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(Options => Options.RegisterModule(new AutofacBusinessModel())));
             // Add services to the container.
 

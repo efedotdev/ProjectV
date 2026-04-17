@@ -54,7 +54,6 @@ namespace Core.CrossCuttingConcerns.Cahing.Microsoft
             if (coherentStateField != null)
             {
                 var coherentState = coherentStateField.GetValue(_memoryCache);
-                // DİKKAT: .NET 8'de burası bir Property değil, Field'dır. (_entries)
                 var entriesField = coherentState.GetType().GetField("_entries",
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
@@ -65,7 +64,7 @@ namespace Core.CrossCuttingConcerns.Cahing.Microsoft
             }
             else
             {
-                // 2. .NET 6 ve öncesi eski sürümler için yedek plan
+                // 2. .NET 6 ve öncesi için yedek plan
                 var entriesCollectionDefinition = typeof(MemoryCache).GetProperty("EntriesCollection",
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
@@ -75,21 +74,18 @@ namespace Core.CrossCuttingConcerns.Cahing.Microsoft
                 }
             }
 
-            // Eğer cache listesine hiçbir şekilde ulaşılamazsa çökmeyi engelle ve çık
             if (cacheEntriesCollection == null) return;
 
             var keysToRemove = new List<string>();
             var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-            // 3. Koleksiyon içindeki verileri güvenli şekilde dön (KeyValuePair mantığı ile)
+            // 3. Eşleşenleri bul ve listeye ekle
             foreach (var cacheItem in cacheEntriesCollection)
             {
                 var keyProperty = cacheItem.GetType().GetProperty("Key");
                 if (keyProperty != null)
                 {
                     var key = keyProperty.GetValue(cacheItem)?.ToString();
-
-                    // Eğer anahtar, "IProductService.Get" gibi gönderilen pattern ile eşleşiyorsa silinecekler listesine ekle
                     if (key != null && regex.IsMatch(key))
                     {
                         keysToRemove.Add(key);
@@ -97,23 +93,10 @@ namespace Core.CrossCuttingConcerns.Cahing.Microsoft
                 }
             }
 
-            // 4. Eşleşen tüm anahtarları bellekten temizle
-            foreach (var cacheItem in cacheEntriesCollection)
+            // 4. Listeye eklenen anahtarları GERÇEKTEN bellekten sil
+            foreach (var key in keysToRemove.Distinct())
             {
-                var keyProperty = cacheItem.GetType().GetProperty("Key");
-                if (keyProperty != null)
-                {
-                    var key = keyProperty.GetValue(cacheItem)?.ToString();
-
-                    // GELİŞTİRİCİ KONTROLÜ İÇİN KONSOLA YAZDIR:
-                    Console.WriteLine("BELLEKTE BULUNAN ANAHTAR: " + key);
-
-                    if (key != null && regex.IsMatch(key))
-                    {
-                        keysToRemove.Add(key);
-                        Console.WriteLine("EŞLEŞTİ VE SİLİNECEK: " + key);
-                    }
-                }
+                _memoryCache.Remove(key);
             }
         }
     }
